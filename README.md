@@ -20,6 +20,6 @@ for real-world tasks on Somnia L1 infrastructure.
 
 ## Project Status
 🚧 Currently in development for Somnia Agentathon
-
+https://beautiful-squirrel-1b83d9.netlify.app/ 
 ## Team
 - Rakesh Kalisetty (Solo Developer)
