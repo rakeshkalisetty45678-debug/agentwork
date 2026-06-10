@@ -1,59 +1,88 @@
-/**
- * AgentWork — Deploy Script
- * Deploys AgentWork.sol to Somnia Testnet
- *
- * Usage:
- *   npm install
- *   export DEPLOYER_PRIVATE_KEY=0xyourprivatekey
- *   node scripts/deploy.js
- */
+require("dotenv").config();
 
 const { ethers } = require("ethers");
-const fs         = require("fs");
-const path       = require("path");
 
-const SOMNIA_RPC     = "https://dream-rpc.somnia.network";
-const SOMNIA_CHAINID = 50312;
+const SOMNIA_RPC =
+  process.env.SOMNIA_RPC_URL ||
+  "https://dream-rpc.somnia.network";
+
+const SOMNIA_CHAIN_ID = 50312;
 
 async function deploy() {
-  console.log("\n🚀 Deploying AgentWork to Somnia Agentic L1...\n");
+  console.log("\n╔══════════════════════════════════════╗");
+  console.log("║      AgentWork Deployment Tool      ║");
+  console.log("╚══════════════════════════════════════╝\n");
 
-  const provider = new ethers.JsonRpcProvider(SOMNIA_RPC);
-  const network  = await provider.getNetwork();
+  const privateKey = process.env.DEPLOYER_PRIVATE_KEY;
 
-  if (Number(network.chainId) !== SOMNIA_CHAINID) {
-    throw new Error(`Wrong network! Expected Somnia (50312), got ${network.chainId}`);
+  if (!privateKey) {
+    throw new Error(
+      "DEPLOYER_PRIVATE_KEY missing in .env"
+    );
   }
 
-  const wallet  = new ethers.Wallet(process.env.DEPLOYER_PRIVATE_KEY, provider);
-  const balance = await provider.getBalance(wallet.address);
+  const provider = new ethers.JsonRpcProvider(
+    SOMNIA_RPC
+  );
 
-  console.log(`📍 Deployer : ${wallet.address}`);
-  console.log(`💰 Balance  : ${ethers.formatEther(balance)} STT`);
-  console.log(`🌐 Network  : Somnia Testnet (Chain ID: ${SOMNIA_CHAINID})\n`);
+  const network = await provider.getNetwork();
 
-  if (balance === 0n) {
-    console.error("❌ Insufficient STT balance!");
-    console.error("   Get testnet STT from: https://somnia-testnet.socialscan.io/faucet");
-    process.exit(1);
+  if (
+    Number(network.chainId) !== SOMNIA_CHAIN_ID
+  ) {
+    throw new Error(
+      `Wrong network. Expected ${SOMNIA_CHAIN_ID}, got ${network.chainId}`
+    );
   }
 
-  // Read compiled contract (use hardhat or solc to compile first)
-  // For now, log instructions
-  console.log("📋 To deploy:");
-  console.log("   1. Install Hardhat: npm install --save-dev hardhat");
-  console.log("   2. Run: npx hardhat compile");
-  console.log("   3. Run: npx hardhat run scripts/deploy.js --network somnia");
-  console.log("\n📋 Hardhat config for Somnia:");
-  console.log(`
-  networks: {
-    somnia: {
-      url: "https://dream-rpc.somnia.network",
-      chainId: 50312,
-      accounts: [process.env.DEPLOYER_PRIVATE_KEY]
-    }
+  const wallet = new ethers.Wallet(
+    privateKey,
+    provider
+  );
+
+  const balance = await provider.getBalance(
+    wallet.address
+  );
+
+  console.log(`📍 Wallet : ${wallet.address}`);
+  console.log(
+    `💰 Balance : ${ethers.formatEther(balance)} STT`
+  );
+  console.log(`🌐 Network : Somnia Agentic L1`);
+  console.log(`⚡ RPC : ${SOMNIA_RPC}\n`);
+
+  if (balance <= 0n) {
+    throw new Error(
+      "Wallet has no STT for deployment"
+    );
   }
-  `);
+
+  console.log("✅ Environment Verified");
+  console.log("✅ Wallet Connected");
+  console.log("✅ Somnia RPC Connected");
+  console.log("✅ Ready To Deploy\n");
+
+  console.log("Next Steps:");
+  console.log("1. Compile contract");
+  console.log("   npx hardhat compile\n");
+
+  console.log("2. Deploy contract");
+  console.log(
+    "   npx hardhat run scripts/deploy.js --network somnia\n"
+  );
+
+  console.log("3. Save deployed address");
+  console.log(
+    "   CONTRACT_ADDRESS=0xYourContractAddress\n"
+  );
+
+  console.log(
+    "🚀 AgentWork deployment configuration complete."
+  );
 }
 
-deploy().catch(console.error);
+deploy().catch((err) => {
+  console.error("\n❌ Deployment Failed");
+  console.error(err.message);
+  process.exit(1);
+});
