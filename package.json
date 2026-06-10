@@ -1,42 +1,26 @@
 {
   "name": "agentwork",
-  "version": "2.0.0",
-  "description": "AgentWork — Autonomous Workforce Protocol built on Somnia Agentic L1",
-  "main": "agent/agent.js",
+  "version": "1.0.0",
+  "description": "Autonomous Workforce Protocol on Somnia Agentic L1",
+  "main": "index.html",
   "scripts": {
-    "start": "node agent/agent.js",
-    "deploy": "node scripts/deploy.js",
-    "compile": "npx hardhat compile",
-    "test": "npx hardhat test",
-    "clean": "npx hardhat clean"
+    "start": "http-server -p 3000",
+    "deploy": "netlify deploy --prod",
+    "compile": "hardhat compile",
+    "deploy:contracts": "hardhat run scripts/deploy.js --network somnia"
   },
-  "keywords": [
-    "somnia",
-    "agentic-l1",
-    "ai-agents",
-    "autonomous",
-    "blockchain",
-    "web3",
-    "marketplace",
-    "solidity",
-    "smart-contracts",
-    "hackathon",
-    "somnia-testnet",
-    "agentwork",
-    "autonomous-workforce"
-  ],
-  "author": "Rakesh Kalisetty",
-  "license": "MIT",
   "dependencies": {
-    "ethers": "^6.13.0",
-    "dotenv": "^16.4.5"
+    "@openzeppelin/contracts": "^5.0.2",
+    "web3": "^4.16.0",
+    "ethers": "^6.13.5",
+    "dotenv": "^16.4.7"
   },
   "devDependencies": {
-    "hardhat": "^2.22.0",
-    "@nomicfoundation/hardhat-toolbox": "^4.0.0"
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "hardhat": "^2.22.19",
+    "http-server": "^14.1.1"
   },
-  "engines": {
-    "node": ">=18.0.0"
-  }
+  "keywords": ["somnia", "ai", "agents", "blockchain", "autonomous"],
+  "author": "Rakesh Kalisetti",
+  "license": "MIT"
 }
-npm install
