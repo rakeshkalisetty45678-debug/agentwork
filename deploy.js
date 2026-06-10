@@ -1,88 +1,34 @@
-require("dotenv").config();
+const hre = require("hardhat");
 
-const { ethers } = require("ethers");
-
-const SOMNIA_RPC =
-  process.env.SOMNIA_RPC_URL ||
-  "https://dream-rpc.somnia.network";
-
-const SOMNIA_CHAIN_ID = 50312;
-
-async function deploy() {
-  console.log("\n╔══════════════════════════════════════╗");
-  console.log("║      AgentWork Deployment Tool      ║");
-  console.log("╚══════════════════════════════════════╝\n");
-
-  const privateKey = process.env.DEPLOYER_PRIVATE_KEY;
-
-  if (!privateKey) {
-    throw new Error(
-      "DEPLOYER_PRIVATE_KEY missing in .env"
-    );
-  }
-
-  const provider = new ethers.JsonRpcProvider(
-    SOMNIA_RPC
-  );
-
-  const network = await provider.getNetwork();
-
-  if (
-    Number(network.chainId) !== SOMNIA_CHAIN_ID
-  ) {
-    throw new Error(
-      `Wrong network. Expected ${SOMNIA_CHAIN_ID}, got ${network.chainId}`
-    );
-  }
-
-  const wallet = new ethers.Wallet(
-    privateKey,
-    provider
-  );
-
-  const balance = await provider.getBalance(
-    wallet.address
-  );
-
-  console.log(`📍 Wallet : ${wallet.address}`);
-  console.log(
-    `💰 Balance : ${ethers.formatEther(balance)} STT`
-  );
-  console.log(`🌐 Network : Somnia Agentic L1`);
-  console.log(`⚡ RPC : ${SOMNIA_RPC}\n`);
-
-  if (balance <= 0n) {
-    throw new Error(
-      "Wallet has no STT for deployment"
-    );
-  }
-
-  console.log("✅ Environment Verified");
-  console.log("✅ Wallet Connected");
-  console.log("✅ Somnia RPC Connected");
-  console.log("✅ Ready To Deploy\n");
-
-  console.log("Next Steps:");
-  console.log("1. Compile contract");
-  console.log("   npx hardhat compile\n");
-
-  console.log("2. Deploy contract");
-  console.log(
-    "   npx hardhat run scripts/deploy.js --network somnia\n"
-  );
-
-  console.log("3. Save deployed address");
-  console.log(
-    "   CONTRACT_ADDRESS=0xYourContractAddress\n"
-  );
-
-  console.log(
-    "🚀 AgentWork deployment configuration complete."
-  );
+async function main() {
+    console.log("Deploying AgentWork contracts to Somnia Mainnet...");
+    
+    // Deploy AgentRegistry
+    const AgentRegistry = await hre.ethers.getContractFactory("AgentRegistry");
+    const agentRegistry = await AgentRegistry.deploy();
+    await agentRegistry.waitForDeployment();
+    console.log("AgentRegistry deployed to:", await agentRegistry.getAddress());
+    
+    // Deploy Escrow
+    const Escrow = await hre.ethers.getContractFactory("Escrow");
+    const escrow = await Escrow.deploy();
+    await escrow.waitForDeployment();
+    console.log("Escrow deployed to:", await escrow.getAddress());
+    
+    // Deploy Reputation
+    const Reputation = await hre.ethers.getContractFactory("Reputation");
+    const reputation = await Reputation.deploy();
+    await reputation.waitForDeployment();
+    console.log("Reputation deployed to:", await reputation.getAddress());
+    
+    console.log("\n✅ All contracts deployed successfully to Somnia Mainnet!");
+    console.log("\nContract Addresses:");
+    console.log("AgentRegistry:", await agentRegistry.getAddress());
+    console.log("Escrow:", await escrow.getAddress());
+    console.log("Reputation:", await reputation.getAddress());
 }
 
-deploy().catch((err) => {
-  console.error("\n❌ Deployment Failed");
-  console.error(err.message);
-  process.exit(1);
+main().catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
 });
