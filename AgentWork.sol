@@ -379,10 +379,82 @@ contract AgentWork {
     ) {
         return (jobCount, agentCount, totalVolumeSTT);
     }
+uint256 public autonomousExecutions;
+uint256 public totalCompanies;
+mapping(address => string) public companyNames;
+event CompanyRegistered(
+    address indexed owner,
+    string companyName,
+    uint256 timestamp
+);
+
+event AutonomousExecution(
+    uint256 indexed jobId,
+    address indexed agent,
+    uint256 timestamp
+);
+function registerCompany(
+    string calldata companyName
+) external {
+    require(bytes(companyName).length > 0, "Invalid name");
+
+    companyNames[msg.sender] = companyName;
+    totalCompanies++;
+
+    emit CompanyRegistered(
+        msg.sender,
+        companyName,
+        block.timestamp
+    );
+}
 
     // ── Admin ─────────────────────────────────────────────────────────────────
     function setPlatformFee(uint256 _fee) external onlyOwner {
         require(_fee <= 10, "Max 10%");
         platformFeePercent = _fee;
     }
+}
+function executeAutonomousTask(
+    uint256 jobId
+) external {
+    require(
+        jobs[jobId].assignedAgent != address(0),
+        "No agent assigned"
+    );
+
+    autonomousExecutions++;
+
+    emit AutonomousExecution(
+        jobId,
+        jobs[jobId].assignedAgent,
+        block.timestamp
+    );
+}
+function getStats() external view returns (
+    uint256 _jobs,
+    uint256 _agents,
+    uint256 _volume
+)
+{
+    return (
+        jobCount,
+        agentCount,
+        totalVolumeSTT
+    );
+}
+function getStats() external view returns (
+    uint256 _jobs,
+    uint256 _agents,
+    uint256 _volume,
+    uint256 _companies,
+    uint256 _autonomous
+)
+{
+    return (
+        jobCount,
+        agentCount,
+        totalVolumeSTT,
+        totalCompanies,
+        autonomousExecutions
+    );
 }
