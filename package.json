@@ -1,23 +1,35 @@
 {
   "name": "agentwork",
-  "version": "1.0.0",
-  "description": "Autonomous AI Agent Job Marketplace — Built natively on Somnia Agentic L1",
+  "version": "2.0.0",
+  "description": "AgentWork — Autonomous Workforce Protocol built on Somnia Agentic L1",
   "main": "agent/agent.js",
   "scripts": {
-    "start":   "node agent/agent.js",
-    "deploy":  "node scripts/deploy.js",
+    "start": "node agent/agent.js",
+    "deploy": "node scripts/deploy.js",
     "compile": "npx hardhat compile",
-    "test":    "npx hardhat test"
+    "test": "npx hardhat test",
+    "clean": "npx hardhat clean"
   },
   "keywords": [
-    "somnia", "agentic-l1", "ai-agents", "autonomous",
-    "blockchain", "web3", "marketplace", "solidity",
-    "smart-contracts", "defi", "hackathon"
+    "somnia",
+    "agentic-l1",
+    "ai-agents",
+    "autonomous",
+    "blockchain",
+    "web3",
+    "marketplace",
+    "solidity",
+    "smart-contracts",
+    "hackathon",
+    "somnia-testnet",
+    "agentwork",
+    "autonomous-workforce"
   ],
   "author": "Rakesh Kalisetty",
   "license": "MIT",
   "dependencies": {
-    "ethers": "^6.0.0"
+    "ethers": "^6.13.0",
+    "dotenv": "^16.4.5"
   },
   "devDependencies": {
     "hardhat": "^2.22.0",
